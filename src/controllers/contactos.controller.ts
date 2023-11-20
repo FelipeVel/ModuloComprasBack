@@ -10,7 +10,6 @@ export const controller: Controller = {
       'SELECT * FROM TIPOCONTACTO',
       {}
     );
-    console.log(result);
     const list: TipoContacto[] = result.rows!.map((row: any) => {
       const tipo: TipoContacto = {
         valor: row[0],

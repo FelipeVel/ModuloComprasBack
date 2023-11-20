@@ -40,6 +40,46 @@ export const controller: Controller = {
     });
     res.send(regs);
   },
+
+  getByKeys(req: Request, res: Response) {
+    const { tipoPersona, tipoDocumento, numeroDocumento } = req.params;
+    utilities
+      .executeQuery(
+        `SELECT * FROM PERSONA WHERE IDTIPOPERSONA = :tipoPersona AND IDTIPODOC = :tipoDocumento AND NDOCUMENTO = :numeroDocumento`,
+        { tipoPersona, tipoDocumento, numeroDocumento }
+      )
+      .then((result: Result<any>) => {
+        const row: any = result.rows![0];
+        const persona: PersonaIn = {
+          nombre: row[3],
+          apellido: row[4],
+          tipoPersona: row[1],
+          tipoDocumento: row[0],
+          numeroDocumento: row[2],
+        };
+        res.send(persona);
+      });
+  },
+
+  getByType(req: Request, res: Response) {
+    const tipoPersona: string = req.params.tipoPersona;
+    utilities
+      .executeQuery(`SELECT * FROM PERSONA WHERE IDTIPOPERSONA = :tipoPersona`, { tipoPersona })
+      .then((result: Result<any>) => {
+        const regs: PersonaIn[] = result.rows!.map((row: any) => {
+          const persona: PersonaIn = {
+            nombre: row[3],
+            apellido: row[4],
+            tipoPersona: row[1],
+            tipoDocumento: row[0],
+            numeroDocumento: row[2],
+          };
+          return persona;
+        });
+        res.send(regs);
+      });
+  },
+
   create: async (req: Request, res: Response) => {
     const persona: PersonaIn = req.body;
     const queriesDirecciones: string[] = [];
@@ -66,7 +106,7 @@ export const controller: Controller = {
             return row[0];
           });
         });
-      for (const direccion of persona.direcciones) {
+      for (const direccion of persona.direcciones!) {
         const keys: string[] = Object.keys(direccion);
         for (const key of keys) {
           const comp: CompDireccion | undefined = componentes.find(
@@ -99,7 +139,7 @@ export const controller: Controller = {
           queriesDirecciones.push(query);
         }
       }
-      persona.contactos.forEach((contacto: Contacto, id: number) => {
+      persona.contactos!.forEach((contacto: Contacto, id: number) => {
         const contactoReg: ContactoDB = {
           IDTIPOCONTACTO: contacto.tipoContacto,
           DESCCONTACTO: contacto.descContacto,

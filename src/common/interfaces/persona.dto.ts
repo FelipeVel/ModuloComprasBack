@@ -47,8 +47,8 @@ export interface PersonaIn {
   tipoPersona: string;
   tipoDocumento: string;
   numeroDocumento: string;
-  direcciones: Direccion[];
-  contactos: Contacto[];
+  direcciones?: Direccion[];
+  contactos?: Contacto[];
 }
 
 export interface Contacto {

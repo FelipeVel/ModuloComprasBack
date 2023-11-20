@@ -1,5 +1,4 @@
 import oracledb, { Connection, Result } from 'oracledb';
-import { unknown } from 'zod';
 
 oracledb.autoCommit = true;
 
@@ -13,16 +12,19 @@ export const utilities = {
         password: 'felipe',
         connectString: '172.24.96.1:1521/XE',
       });
+      console.log(`Ejecutando query: ${query} con parametros ${JSON.stringify(params)}`);
       result = await connection.execute(query, params);
       connection.close();
       return result;
     } catch (error) {
-      console.log(error);
+      console.log(`!- Error ejecutando query ${query} con parametros ${JSON.stringify(params)}`);
+      console.log(`!- Error: ${error}`);
       if (connection) {
         try {
+          console.log(`Cerrando conexion`);
           await connection.close();
         } catch (error) {
-          console.log(error);
+          console.log(`!- Error cerrando conexion: ${error}`);
         }
       }
       throw error;
@@ -30,7 +32,7 @@ export const utilities = {
   },
 
   async executeTransaction(queries: string[], params: any[]): Promise<Result<any>> {
-    console.log('-------------------START TRANSACTION-------------------');
+    console.log('-------------------INICIO DE TRANSACCION-------------------');
     let connection: Connection | null = null;
     let result: Result<any> | void;
     try {
@@ -40,29 +42,28 @@ export const utilities = {
         connectString: '172.24.96.1:1521/XE',
       });
       for (let i = 0; i < queries.length; i++) {
-        console.log(`Executing query: ${queries[i]}`);
-        console.log(`With params: ${JSON.stringify(params[i])}`);
+        console.log(`Ejecutando query: ${queries[i]} con parametros: ${JSON.stringify(params[i])}`);
         result = await connection
           .execute(queries[i], params[i], { autoCommit: false })
           .catch((error) => {
-            console.log('!- Error executing query ', queries[i], ' with params ', params[i]);
-            console.log('!- error:', error);
+            console.log('!- Error ejecutando query ', queries[i], ' con parametros ', params[i]);
+            console.log('!- Error:', error);
             throw error;
           });
       }
-      console.log(`Executing query: commit`);
+      console.log(`Ejecutando commit`);
       await connection.execute('commit');
       connection.close();
 
-      console.log('-------------------END TRANSACTION-------------------');
+      console.log('-------------------FIN DE TRANSACCION-------------------');
       return result!;
     } catch (error) {
       console.log(error);
       if (connection) {
         try {
-          console.log(`Executing query: rollback`);
+          console.log(`Ejecutando rollback`);
           await connection.execute('rollback');
-          console.log(`Closing connection`);
+          console.log(`Cerrando conexion`);
           await connection.close();
         } catch (error) {
           console.log(error);

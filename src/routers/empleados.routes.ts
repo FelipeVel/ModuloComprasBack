@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
-import { controller as nomenclaturasController } from '../controllers/empleados.controller';
+import { controller as empleadosController } from '../controllers/empleados.controller';
 
 const router: Router = express.Router();
 
-router.get('/:correo', nomenclaturasController.getAll);
+router.get('/:codigo', empleadosController.getByCodigo);
 
 export default router;

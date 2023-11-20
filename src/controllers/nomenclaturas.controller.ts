@@ -6,7 +6,6 @@ import { Nomenclatura } from '../common/interfaces/nomenclatura.dto';
 export const controller: Controller = {
   getAll: async (req, res) => {
     const result: Result<any> = await utilities.executeQuery('SELECT * FROM NOMENCLATURA', {});
-    console.log(result);
     const list: Nomenclatura[] = result.rows!.map((row: any) => {
       const nomenclatura: Nomenclatura = {
         id: row[0],
