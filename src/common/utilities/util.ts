@@ -3,7 +3,7 @@ import oracledb, { Connection, Result } from 'oracledb';
 oracledb.autoCommit = true;
 
 export const utilities = {
-  async executeQuery(query: string, params: any): Promise<Result<any>> {
+  async executeQuery(query: string, params: any, autocommit: boolean = true): Promise<Result<any>> {
     let connection: Connection | null = null;
     let result: Result<any>;
     try {
@@ -13,7 +13,7 @@ export const utilities = {
         connectString: '172.24.96.1:1521/XE',
       });
       console.log(`Ejecutando query: ${query} con parametros ${JSON.stringify(params)}`);
-      result = await connection.execute(query, params);
+      result = await connection.execute(query, params, { autoCommit: autocommit });
       connection.close();
       return result;
     } catch (error) {
