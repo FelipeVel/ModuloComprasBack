@@ -14,7 +14,7 @@ export const utilities = {
       });
       console.log(`Ejecutando query: ${query} con parametros ${JSON.stringify(params)}`);
       result = await connection.execute(query, params, { autoCommit: autocommit });
-      connection.close();
+      await connection.close();
       return result;
     } catch (error) {
       console.log(`!- Error ejecutando query ${query} con parametros ${JSON.stringify(params)}`);
@@ -53,7 +53,7 @@ export const utilities = {
       }
       console.log(`Ejecutando commit`);
       await connection.execute('commit');
-      connection.close();
+      await connection.close();
 
       console.log('-------------------FIN DE TRANSACCION-------------------');
       return result!;

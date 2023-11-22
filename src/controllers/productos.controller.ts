@@ -39,7 +39,7 @@ export const controller: Controller = {
           nombre: row[3],
         },
         //precio: row[4],
-        precio: 100,
+        precio: 10.5,
         nombre: row[2],
         //stock: row[5],
         stock: 5,

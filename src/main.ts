@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import personasRouter from './routers/personas.routes';
 import nomenclaturasRouter from './routers/nomenclaturas.routes';
@@ -12,6 +12,11 @@ const app: Application = express();
 
 app.use(express.json());
 app.use(cors());
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log(`Request URL: ${req.url}`);
+  next();
+});
 
 app.use('/personas', personasRouter);
 app.use('/nomenclaturas', nomenclaturasRouter);

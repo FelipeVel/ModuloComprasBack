@@ -25,7 +25,7 @@ export interface Item {
 }
 
 export interface Producto {
-  id: number;
+  id: string;
   nombre: string;
   precio: number;
   stock: number;
@@ -67,6 +67,15 @@ export interface DetalleFacturaDB {
   PRECIO: number;
 }
 
+export interface DetalleFactura {
+  numFactura: string;
+  item: number;
+  categoriaProducto: string;
+  idProducto: string;
+  cantidad: number;
+  precio: number;
+}
+
 export interface InventarioDB {
   CONSECINVEN: number;
   IDTIPOFAC: string;
@@ -78,4 +87,14 @@ export interface InventarioDB {
   SALEN: number;
   ENTRAN: number;
   EXISTENCIA: number;
+}
+
+export interface Inventario {
+  numFactura: string;
+  categoriaProducto: string;
+  item: number;
+  idProducto: string;
+  inventarioPadre?: number;
+  cantidad: number;
+  existencia: number;
 }

@@ -3,6 +3,7 @@ import { controller as facturaController } from '../controllers/factura.controll
 
 const router: Router = express.Router();
 
-router.post('venta/', facturaController.createFacturaVenta);
+router.post('/VE', facturaController.createFacturaVenta);
+router.post('/CO', facturaController.createFacturaCompra);
 
 export default router;
