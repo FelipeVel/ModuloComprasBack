@@ -19,7 +19,7 @@ export const controller: Controller = {
     const queriesProductos: string[] = [];
     const paramsProductos: DetalleFacturaDB[] = [];
     const regFactura: RegFactura = {
-      idFactura: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER },
+      idFactura: { dir: oracledb.BIND_OUT, type: oracledb.DB_TYPE_VARCHAR },
       tipoDocumento: factura.persona.tipoDocumento,
       tipoPersona: factura.persona.tipoPersona,
       codigoEmpleado: factura.empleado.codigo,
