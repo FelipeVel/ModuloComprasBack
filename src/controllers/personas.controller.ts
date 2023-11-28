@@ -11,7 +11,7 @@ import {
 } from '../common/interfaces/persona.dto';
 import { Nomenclatura, NomenclaturaDB } from '../common/interfaces/nomenclatura.dto';
 import { Result } from 'oracledb';
-import { CompDireccion } from '../common/interfaces/componenteDireccion.dto';
+import { CompDireccionDB } from '../common/interfaces/componenteDireccion.dto';
 
 type ParNomenclatura = {
   posicion: number;
@@ -87,11 +87,11 @@ export const controller: Controller = {
     const paramsDirecciones: DireccionDB[] = [];
     const paramsContactos: ContactoDB[] = [];
     try {
-      const componentes: CompDireccion[] = await utilities
+      const componentes: CompDireccionDB[] = await utilities
         .executeQuery(`SELECT * FROM COMPONENTEDIRECC`, {})
-        .then((result: Result<CompDireccion[]>) => {
+        .then((result: Result<CompDireccionDB[]>) => {
           return result.rows!.map((row: any[]) => {
-            const componente: CompDireccion = {
+            const componente: CompDireccionDB = {
               POSICION: row[0],
               DESCPOSICION: row[1],
               OBLIGATORIEDAD: row[2],
@@ -109,8 +109,8 @@ export const controller: Controller = {
       for (const direccion of persona.direcciones!) {
         const keys: string[] = Object.keys(direccion);
         for (const key of keys) {
-          const comp: CompDireccion | undefined = componentes.find(
-            (componente: CompDireccion) => componente.DESCPOSICION === componenteDict[key]
+          const comp: CompDireccionDB | undefined = componentes.find(
+            (componente: CompDireccionDB) => componente.DESCPOSICION === componenteDict[key]
           );
           const posicion: number = comp!.POSICION;
           const dirReg: DireccionDB = {
