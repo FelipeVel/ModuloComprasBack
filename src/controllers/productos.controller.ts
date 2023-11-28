@@ -20,15 +20,17 @@ export const controller: Controller = {
   getByKeys: async (req: Request, res: Response) => {
     const { producto } = req.params;
     const result: Result<any> = await utilities.executeQuery(
-      `SELECT P.*, C.DESCATPRODUCTO, HP.VALOR
-      FROM PRODUCTO P, CATPRODUCTO C, HISTORICOPRECIO HP
-      WHERE P.PRODUCTO = :producto AND 
-        P.IDCATPRODUCTO = C.IDCATPRODUCTO
-        AND P.PRODUCTO = HP.PRODUCTO
-        AND P.IDCATPRODUCTO = HP.IDCATPRODUCTO
-        AND HP.FECHAFIN IS NULL`,
-      /* AND P.PRODUCTO = I.PRODUCTO
-        AND P.IDCATPRODUCTO = I.IDCATPRODUCTO`, */
+      `SELECT A.*, NVL(I.EXISTENCIA,0) EXISTENCIA FROM (
+        SELECT P.*, C.DESCATPRODUCTO, HP.VALOR
+        FROM PRODUCTO P, CATPRODUCTO C, HISTORICOPRECIO HP
+        WHERE P.PRODUCTO = :producto AND 
+          P.IDCATPRODUCTO = C.IDCATPRODUCTO
+          AND P.PRODUCTO = HP.PRODUCTO
+          AND P.IDCATPRODUCTO = HP.IDCATPRODUCTO
+          AND HP.FECHAFIN IS NULL
+        ) A LEFT JOIN INVENTARIO I ON A.PRODUCTO = I.PRODUCTO
+      WHERE ROWNUM <= 1
+      ORDER BY I.FECHAINVE DESC`,
       { producto }
     );
     const list: Producto[] = result.rows!.map((row: any) => {
@@ -38,11 +40,9 @@ export const controller: Controller = {
           id: row[0],
           nombre: row[3],
         },
-        //precio: row[4],
-        precio: 10.5,
+        precio: row[4],
         nombre: row[2],
-        //stock: row[5],
-        stock: 5,
+        stock: row[5],
       };
     });
     res.send(list);
