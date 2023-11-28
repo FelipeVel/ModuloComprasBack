@@ -115,7 +115,7 @@ export const controller: Controller = {
           [regFactura, ...paramsProductos, ...paramsInventario]
         )
         .then(() => {
-          res.status(201).send({ message: 'Factura creada' });
+          res.status(201).send({ message: 'Factura creada', numFactura: idFactura });
         });
     } catch (error) {
       console.log(error);
