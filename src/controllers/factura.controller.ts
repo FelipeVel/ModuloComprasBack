@@ -12,7 +12,7 @@ interface RegFactura {
   facturaPadre?: string;
   tipoFacturaPadre?: string;
   numDocumento: string;
-  totalFactura: number;
+  totalFactura?: number;
 }
 
 export const controller: Controller = {
@@ -77,7 +77,10 @@ export const controller: Controller = {
         tipoPersona: factura.persona!.tipoPersona,
         codigoEmpleado: factura.empleado!.codigo,
         numDocumento: factura.persona!.numeroDocumento,
-        totalFactura: 0,
+        totalFactura: factura.items.reduce(
+          (sum: number, item: any) => sum + item.producto.precio * item.cantidad,
+          0
+        ),
       };
       let i = 1;
       for (const producto of factura.items) {
@@ -141,7 +144,10 @@ export const controller: Controller = {
         tipoPersona: factura.persona!.tipoPersona,
         codigoEmpleado: factura.empleado!.codigo,
         numDocumento: factura.persona!.numeroDocumento,
-        totalFactura: 0,
+        totalFactura: factura.items.reduce(
+          (sum: number, item: any) => sum + item.producto.precio * item.cantidad,
+          0
+        ),
       };
       let i = 1;
       for (const producto of factura.items) {
@@ -179,7 +185,7 @@ export const controller: Controller = {
           [regFactura, ...paramsProductos, ...paramsInventario]
         )
         .then(() => {
-          res.status(201).send({ message: 'Factura creada' });
+          res.status(201).send({ message: 'Factura creada', numFactura: idFactura });
         });
     } catch (error) {
       console.log(error);
@@ -207,7 +213,6 @@ export const controller: Controller = {
         idFactura: idFactura,
         facturaPadre: factura.numFactura!,
         codigoEmpleado: factura.empleado!.codigo,
-        totalFactura: 0,
         tipoDocumento: facturaPadreResult.rows![0][0],
         tipoPersona: facturaPadreResult.rows![0][1],
         numDocumento: facturaPadreResult.rows![0][2],
@@ -234,7 +239,7 @@ export const controller: Controller = {
         );
         const existencia = existenciaResult.rows![0][0];
         const consecResult: Result<any> = await utilities.executeQuery(
-          'SELECT CONSECINVEN FROM INVENTARIO WHERE IDTIPOFAC = "VE" AND NFACTURA = :numFactura',
+          "SELECT CONSECINVEN FROM INVENTARIO WHERE IDTIPOFAC = 'VE' AND NFACTURA = :numFactura",
           { numFactura: factura.numFactura }
         );
         const consec = consecResult.rows![0][0];
@@ -255,14 +260,14 @@ export const controller: Controller = {
       utilities
         .executeTransaction(
           [
-            "INSERT INTO FACTURA (NFACTURA, IDTIPOFAC, IDTIPODOC, IDTIPOPERSONA, NDOCUMENTO, CODEMPLEADO, FECHAFACTURA, TOTALFACTURA, FAC_IDTIPOFAC, FAC_NFACTURA) VALUES (:idFactura, 'DV', :tipoDocumento, :tipoPersona, :numDocumento, :codigoEmpleado, SYSDATE, :totalFactura, 'VE', :facturaPadre)",
+            "INSERT INTO FACTURA (NFACTURA, IDTIPOFAC, IDTIPODOC, IDTIPOPERSONA, NDOCUMENTO, CODEMPLEADO, FECHAFACTURA, FAC_IDTIPOFAC, FAC_NFACTURA) VALUES (:idFactura, 'DV', :tipoDocumento, :tipoPersona, :numDocumento, :codigoEmpleado, SYSDATE, 'VE', :facturaPadre)",
             ...queriesProductos,
             ...queriesInventario,
           ],
           [regFactura, ...paramsProductos, ...paramsInventario]
         )
         .then(() => {
-          res.status(201).send({ message: 'Factura creada' });
+          res.status(201).send({ message: 'Factura creada', numFactura: idFactura });
         });
     } catch (error) {
       console.log(error);
@@ -290,7 +295,6 @@ export const controller: Controller = {
         idFactura: idFactura,
         facturaPadre: factura.numFactura!,
         codigoEmpleado: factura.empleado!.codigo,
-        totalFactura: 0,
         tipoDocumento: facturaPadreResult.rows![0][0],
         tipoPersona: facturaPadreResult.rows![0][1],
         numDocumento: facturaPadreResult.rows![0][2],
@@ -342,14 +346,14 @@ export const controller: Controller = {
       utilities
         .executeTransaction(
           [
-            "INSERT INTO FACTURA (NFACTURA, IDTIPOFAC, IDTIPODOC, IDTIPOPERSONA, NDOCUMENTO, CODEMPLEADO, FECHAFACTURA, TOTALFACTURA, FAC_IDTIPOFAC, FAC_NFACTURA) VALUES (:idFactura, 'DC', :tipoDocumento, :tipoPersona, :numDocumento, :codigoEmpleado, SYSDATE, :totalFactura, 'CO', :facturaPadre)",
+            "INSERT INTO FACTURA (NFACTURA, IDTIPOFAC, IDTIPODOC, IDTIPOPERSONA, NDOCUMENTO, CODEMPLEADO, FECHAFACTURA, FAC_IDTIPOFAC, FAC_NFACTURA) VALUES (:idFactura, 'DC', :tipoDocumento, :tipoPersona, :numDocumento, :codigoEmpleado, SYSDATE, 'CO', :facturaPadre)",
             ...queriesProductos,
             ...queriesInventario,
           ],
           [regFactura, ...paramsProductos, ...paramsInventario]
         )
         .then(() => {
-          res.status(201).send({ message: 'Factura creada' });
+          res.status(201).send({ message: 'Factura creada', numFactura: idFactura });
         });
     } catch (error) {
       console.log(error);
